@@ -67,6 +67,7 @@ class Avatar extends Component {
 	
 	handleChange(e) {
 		this.props.onAvatarChange(e.target.files[0], this.props.user.cv, this.props.user.bio, this.props.user.address, this.props.user.school);
+		this.refs.submitAvatar.click();
 	}
 		
 	handleClick() {
@@ -85,8 +86,9 @@ class Avatar extends Component {
 			<div className="col-sm-3">
 				<fieldset className="rounded">
 					<img src={ava} className="avatar-change-btn" alt="avatar" />
-					<button className="btn btn-info avatar-change-btn" onClick={this.handleClick}>Update profile picture</button>
+					<button type="button" className="btn btn-info avatar-change-btn" onClick={this.handleClick}>Update profile picture</button>
 					<input id="avatar" type="file" className="file-disable-display" onChange={this.handleChange} accept="image/*" ref="fileInput" />
+					<button className="file-disable-display" ref="submitAvatar"></button>
 				</fieldset>
 			</div>
 		);
@@ -175,7 +177,6 @@ class App extends Component {
   constructor(props) {
 	  super(props);
 	  this.infoChange = this.infoChange.bind(this);
-	  this.handleSubmit = this.handleSubmit.bind(this);
 	  this.state = {
 		  user: {
 			  email: "",
@@ -190,24 +191,7 @@ class App extends Component {
 		  }
 	  };
   }
-  
-  handleSubmit(e) {
-	  this.setState({
-		  user: {
-			  email: this.state.user.email,
-			  username: this.state.user.username,
-			  password: this.state.user.password,
-			  avatarFile: this.state.user.avatarFile,
-			  avatar: this.state.user.avatar,
-			  cv: this.state.user.cv,
-			  bio: this.state.user.bio,
-			  address: this.state.user.address,
-			  school: this.state.user.school
-		  }
-	  });
-	  e.preventDefault();
-  }
-  
+    
   infoChange(newAvatar, newCV, newBio, newAddress, newSchool) {
 	  this.setState({
 		  user: {
@@ -226,7 +210,7 @@ class App extends Component {
   
   render() {
     return (
-	  <form method="POST" onSubmit={this.handleSubmit}>
+	  <form method="POST">
 		<Navbar user={this.state.user}/>
 		<div className="container">
 			<div className="row">
