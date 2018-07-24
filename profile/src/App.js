@@ -24,8 +24,6 @@ class Navbar extends Component {
 							<span className="navbar-toggler-bar bar2"></span>
 							<span className="navbar-toggler-bar bar3"></span>
 						</button>
-
-
 					</div>
 
 					<div className="collapse navbar-collapse justify-content-end" id="navigation">
@@ -68,7 +66,7 @@ class Avatar extends Component {
 	}
 	
 	handleChange(e) {
-		this.props.onAvatarChange(this.props.user.email, this.props.user.tempUsername, this.props.user.password, e.target.files[0]);
+		this.props.onAvatarChange(e.target.files[0], this.props.user.cv, this.props.user.bio, this.props.user.address, this.props.user.school);
 	}
 		
 	handleClick() {
@@ -88,7 +86,7 @@ class Avatar extends Component {
 				<fieldset className="rounded">
 					<img src={ava} className="avatar-change-btn" alt="avatar" />
 					<button className="btn btn-info avatar-change-btn" onClick={this.handleClick}>Update profile picture</button>
-					<input type="file" className="file-disable-display" onChange={this.handleChange} accept="image/*" ref="fileInput" />
+					<input id="avatar" type="file" className="file-disable-display" onChange={this.handleChange} accept="image/*" ref="fileInput" />
 				</fieldset>
 			</div>
 		);
@@ -100,20 +98,26 @@ class EditProfile extends Component {
 	
 	constructor(props) {
 		super(props);
-		this.handleUsername = this.handleUsername.bind(this);
-		this.handlePassword = this.handlePassword.bind(this);
-		this.handleEmail = this.handleEmail.bind(this);
+		this.handleCV = this.handleCV.bind(this);
+		this.handleAddress = this.handleAddress.bind(this);
+		this.handleSchool = this.handleSchool.bind(this);
+		this.handleBio = this.handleBio.bind(this);
 	}
 	
-	handleUsername(e) {
-		this.props.onProfileChange(this.props.user.email, e.target.value, this.props.user.password, this.props.user.avatarFile);
+	handleCV(e) {
+		this.props.onProfileChange(this.props.user.avatarFile, e.target.files[0], this.props.user.bio, this.props.user.address, this.props.user.school);
 	}
 	
-	handlePassword(e) {
-		this.props.onProfileChange(this.props.user.email, this.props.user.tempUsername, e.target.value, this.props.user.avatarFile);
+	handleAddress(e) {
+		this.props.onProfileChange(this.props.user.avatarFile, this.props.user.cv, this.props.user.bio, e.target.value, this.props.user.school);
 	}
-	handleEmail(e) {
-		this.props.onProfileChange(e.target.value, this.props.user.tempUsername, this.props.user.password, this.props.user.avatarFile);
+	
+	handleSchool(e) {
+		this.props.onProfileChange(this.props.user.avatarFile, this.props.user.cv, this.props.user.bio, this.props.user.address, e.target.value);
+	}
+	
+	handleBio(e) {
+		this.props.onProfileChange(this.props.user.avatarFile, this.props.user.cv, e.target.value, this.props.user.address, this.props.user.school);
 	}
 	
 	render() {
@@ -123,17 +127,37 @@ class EditProfile extends Component {
 				<div className="col-sm-11">
 					<div className="form-group input-tp">
 						<label className="label-form col-sm-3" htmlFor="username">Username: </label>
-						<input id="username" type="text" value={this.props.user.tempUsername} onChange={this.handleUsername} placeholder="Username" className="form-control col-sm-7 input-lt" />
+						<input id="username" type="text" value={this.props.user.username} placeholder="Username" className="form-control col-sm-7 input-lt" disabled/>
 					</div>
 					
 					<div className="form-group input-tp">
 						<label className="label-form col-sm-3" htmlFor="password">Password: </label>
-						<input id="password" type="password" value={this.props.user.password} onChange={this.handlePassword} placeholder="Password" className="form-control col-sm-7 input-lt" />
+						<input id="password" type="password" value={this.props.user.password} placeholder="Password" className="form-control col-sm-7 input-lt" disabled/>
 					</div>
 					
 					<div className="form-group input-tp">
 						<label className="label-form col-sm-3" htmlFor="email">Email: </label>
-						<input id="email" type="email" value={this.props.user.email} onChange={this.handleEmail} placeholder="Email" className="form-control col-sm-7 input-lt" />
+						<input id="email" type="email" value={this.props.user.email} placeholder="Email" className="form-control col-sm-7 input-lt" disabled/>
+					</div>
+					
+					<div className="form-group input-tp">
+						<label className="label-form col-sm-3" htmlFor="cv">Upload CV: </label>
+						<input id="cv" className="cv" type="file" onChange={this.handleCV} />
+					</div>
+					
+					<div className="form-group input-tp">
+						<label className="label-form col-sm-3" htmlFor="address">Address: </label>
+						<input id="address" type="text" value={this.props.user.address} onChange={this.handleAddress} placeholder="Address" className="form-control col-sm-7 input-lt" />
+					</div>
+					
+					<div className="form-group input-tp">
+						<label className="label-form col-sm-3" htmlFor="school">School: </label>
+						<input id="school" type="text" value={this.props.user.school} onChange={this.handleSchool} placeholder="School" className="form-control col-sm-7 input-lt" />
+					</div>
+					
+					<div className="form-group input-tp">
+						<label className="label-form col-sm-3" htmlFor="bio">About me: </label>
+						<textarea id="bio" value={this.props.user.bio} onChange={this.handleBio} className="form-control textar-lt" placeholder="About me" rows="5"></textarea>
 					</div>
 					
 					<div className="form-group input-tp">
@@ -156,10 +180,13 @@ class App extends Component {
 		  user: {
 			  email: "",
 			  username: "Default username",
-			  tempUsername: "Default username",
 			  password: "",
 			  avatar: null,
-			  avatarFile: null
+			  avatarFile: null,
+			  cv: null,
+			  bio: "",
+			  address: "",
+			  school: ""
 		  }
 	  };
   }
@@ -168,25 +195,31 @@ class App extends Component {
 	  this.setState({
 		  user: {
 			  email: this.state.user.email,
-			  tempUsername: this.state.user.username,
 			  username: this.state.user.username,
 			  password: this.state.user.password,
 			  avatarFile: this.state.user.avatarFile,
-			  avatar: this.state.user.avatar
+			  avatar: this.state.user.avatar,
+			  cv: this.state.user.cv,
+			  bio: this.state.user.bio,
+			  address: this.state.user.address,
+			  school: this.state.user.school
 		  }
 	  });
 	  e.preventDefault();
   }
   
-  infoChange(newEmail, newUsername, newPassword, newAvatar) {
+  infoChange(newAvatar, newCV, newBio, newAddress, newSchool) {
 	  this.setState({
 		  user: {
-			  email: newEmail,
-			  tempUsername: newUsername,
+			  email: this.state.user.email,
 			  username: this.state.user.username,
-			  password: newPassword,
+			  password: this.state.user.password,
 			  avatarFile: newAvatar,
-			  avatar: this.state.user.avatar
+			  avatar: this.state.user.avatar,
+			  cv: newCV,
+			  bio: newBio,
+			  address: newAddress,
+			  school: newSchool
 		  }
 	  });
   }
