@@ -1,0 +1,30 @@
+.avatar-change-btn {
+	width: 100%
+}
+
+.ava-mar {
+	margin-bottom: 5px
+}
+
+.card-ovl {
+	background-color: #f2edf3
+}
+
+.card-pad-ovl {
+	background-color: #ffffff
+}
+
+.file-disable-display {
+	display: none
+}
+
+.card-pad {
+	padding: 0.5rem 0.5rem
+}
+
+@media screen and (min-width: 768px) {
+    .ctn{
+		margin-right: 5%;
+		margin-left: 5%;
+	}
+}
